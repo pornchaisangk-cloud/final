@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Eruption Diagnosis App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f3f4f6;
+        }
+        input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: #2563eb;
+            cursor: pointer;
+            margin-top: 0.125rem;
+            flex-shrink: 0;
+        }
+        .check-card:has(input:checked) {
+            background-color: #eff6ff;
+            border-color: #bfdbfe;
+        }
+        .check-card:has(input:checked) .check-text {
+            color: #1e3a8a;
+        }
+        .warning-card:has(input:checked) {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+        }
+        .warning-card:has(input:checked) .check-text {
+            color: #7f1d1d;
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-20">
+    <!-- ส่วนลักษณะรอยโรค (แสดงก่อนส่วนประเมินผื่น) -->
+    <section id="lesionSection" class="max-w-6xl mx-auto px-4 pt-6 pb-4">
+        <h2 class="text-2xl font-bold text-slate-800 mb-1">ลักษณะรอยโรค <span class="text-slate-400 text-lg font-normal">(Skin Lesion)</span></h2>
+        <p class="text-sm text-slate-500 mb-5">เลื่อนลงไปด้านล่างเพื่อดูส่วนประเมินผื่นลักษณะจำเพาะ</p>
+        <div id="lesionGroups" class="space-y-8"></div>
+        <p class="text-xs text-slate-400 mt-6">ที่มารูป: UpToDate (ใช้ภายในองค์กรเท่านั้น)</p>
+    </section>
+
+
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl md:text-2xl font-semibold text-blue-900">การวินิจฉัยแยกลักษณะผื่นแพ้ยา</h1>
+            </div>
+            <button onclick="document.querySelectorAll('input[type=checkbox]').forEach(el => el.checked = false)" class="text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 px-4 rounded-full transition-colors font-medium">
+                ล้างข้อมูล
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- MP rash -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-semibold text-slate-800 text-lg">MP rash</h2>
+                        <div class="flex items-center gap-2"><button onclick="openGallery('mprash')" class="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                        </button><button onclick="openDDx('mprash')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                    </div>
+                    <span class="text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded-full">Onset: 4-14days</span>
+                </div>
+                <div class="p-4 space-y-3">
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ตุ่มนูนและรอยแดงผสมกัน ลักษณะกระจายทั่ว สมมาตรกัน <b>ไม่พบผื่นบริเวณเยื่อบุตา ช่องปาก อวัยวะเพศ</b></span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ขอบผื่นแยกจากผิวปกติไม่ชัดเจน</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">คันมาก</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">กดแล้วซีดลง</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-red-100 bg-red-50/50 rounded-xl cursor-pointer transition-all">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-red-600 leading-relaxed">R/O จาก HIV HBV หัด ผื่นจากการติดเชื้อแบคทีเรีย syphilis, SLE, psoriasis</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Urticaria -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-semibold text-slate-800 text-lg">Urticaria</h2>
+                        <div class="flex items-center gap-2"><button onclick="openModal('Urticaria', 'รูป-urticaria.jpg')" class="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                        </button><button onclick="openDDx('urticaria')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                    </div>
+                    <span class="text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded-full">Onset: &lt;1hr</span>
+                </div>
+                <div class="p-4 space-y-3">
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ผื่นไม่ลอกเป็นขุย หรือ ตุ่มน้ำ, ตรงกลางผื่น ซีดกว่าขอบ</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ขอบผื่นยก นูน เป็นหยักๆ</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">คันมาก</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">หายได้เองภายใน 24hr โดยไม่มีร่องรอย</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-red-100 bg-red-50/50 rounded-xl cursor-pointer transition-all">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-red-600 leading-relaxed">R/O จากการแพ้อาหาร แพ้ฝุ่น ติดเชื้อ</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Anaphylaxis shock -->
+            <div class="bg-white rounded-2xl shadow-sm border border-red-200 overflow-hidden">
+                <div class="bg-red-50 px-5 py-3 border-b border-red-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-semibold text-red-700 text-lg">Anaphylaxis</h2>
+                    </div>
+                    <span class="text-xs bg-red-200 text-red-800 px-2 py-1 rounded-full">Onset: &lt;1hr</span>
+                </div>
+                <div class="p-4 space-y-3">
+                    <label class="warning-card flex items-start p-3 border border-red-200 rounded-xl cursor-pointer transition-all hover:bg-red-50">
+                        <input type="checkbox" class="accent-red-600">
+                        <span class="check-text ml-3 text-sm text-slate-800 font-medium leading-relaxed">ผื่นแบบ Angioedema/Urticaria ร่วมกับ (2 ใน 3 ข้อ)</span>
+                    </label>
+                    <div class="pl-4 space-y-2 border-l-2 border-red-100 ml-4">
+                        <label class="warning-card flex items-start p-2 border border-slate-100 rounded-lg cursor-pointer transition-all hover:bg-slate-50">
+                            <input type="checkbox" class="accent-red-600">
+                            <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">Respiratory: หลอดลมตีบ, wheezing, O<sub>2</sub> Sat Drop</span>
+                        </label>
+                        <label class="warning-card flex items-start p-2 border border-slate-100 rounded-lg cursor-pointer transition-all hover:bg-slate-50">
+                            <input type="checkbox" class="accent-red-600">
+                            <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">Cardiovascular: BP Drop<br><span class="text-xs text-slate-500">(Adult SBP&lt;90mmHg, Child SBP&lt;70 mmHg)</span></span>
+                        </label>
+                        <label class="warning-card flex items-start p-2 border border-slate-100 rounded-lg cursor-pointer transition-all hover:bg-slate-50">
+                            <input type="checkbox" class="accent-red-600">
+                            <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">GI: ปวดท้อง คลื่นไส้ อาเจียน</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Eczematous drug eruption -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-semibold text-slate-800 text-lg leading-tight">Eczematous<br>eruption</h2>
+                        <div class="flex items-center gap-2"><button onclick="openModal('Eczematous drug eruption', 'รูป-eczematous.jpg')" class="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                        </button><button onclick="openDDx('eczematous')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                    </div>
+                    <span class="text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded-full text-center">Onset:<br>2days-2wks</span>
+                </div>
+                <div class="p-4 space-y-3">
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ตุ่มนูนปื้นแดงหนากว่า MP rash</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ตุ่มน้ำใส/แตกออกมาเป็นน้ำเหลือง/ตกสะเก็ด</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">คันมาก</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-red-100 bg-red-50/50 rounded-xl cursor-pointer transition-all">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-red-600 leading-relaxed">R/O จาก ผื่น eczema แพ้อากาศ สารเคมี</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Angioedema -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-semibold text-slate-800 text-lg">Angioedema</h2>
+                        <div class="flex items-center gap-2"><button onclick="openModal('Angioedema', 'รูป-angioedema.jpg')" class="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                        </button><button onclick="openDDx('angioedema')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                    </div>
+                    <span class="text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded-full">Onset: &lt;1hr</span>
+                </div>
+                <div class="p-4 space-y-3">
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ผิวหนังมีการบวม นูน คัน รู้สึกตึง</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">พบบ่อยที่เยื่อบุ เปลือกตา ริมฝีปาก</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ใช้เวลาหลายวันกว่าจะยุบ</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-red-100 bg-red-50/50 rounded-xl cursor-pointer transition-all">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-red-600 leading-relaxed">R/O จาก migratory swelling</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Fixed drug eruption -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-semibold text-slate-800 text-lg leading-tight">Fixed drug<br>eruption</h2>
+                        <div class="flex items-center gap-2"><button onclick="openModal('Fixed drug eruption', 'รูป-fixed.jpg')" class="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                        </button><button onclick="openDDx('fixed')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                    </div>
+                    <span class="text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded-full">Onset: Varies</span>
+                </div>
+                <div class="p-4 space-y-3">
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ผื่นรูปร่างกลม/รี ตรงกลางผื่นสีแดงจัด ตรงกลางผื่นอาจมีสีแดงคล้ำ หรือ สีอมม่วง</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">มักมีอาการเจ็บๆ คัน</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">หายแล้วทิ้งรอยคล้ำไว้ชัดเจน</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">กรณีเป็นซ้ำ สามารถเกิดผื่นบริเวณใหม่เพิ่มขึ้นได้</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">กรณีได้ยาเดิมซ้ำ ผื่นต้องเกิดตำแหน่งเดิม</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-red-100 bg-red-50/50 rounded-xl cursor-pointer transition-all">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-red-600 leading-relaxed">R/O จากแมลงสัตว์กัดต่อย/โรคเริม</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Erythema multiforme -->
+            <div class="bg-white rounded-2xl shadow-sm border border-purple-200 overflow-hidden">
+                <div class="bg-purple-50 px-5 py-3 border-b border-purple-200 flex justify-between items-center">
+                    <h2 class="font-semibold text-purple-800 text-lg">Erythema multiforme</h2>
+                    <div class="flex items-center gap-2"><button onclick="openModal('Erythema multiforme', 'รูป-erythema.jpg')" class="flex items-center gap-1 text-xs text-purple-600 bg-purple-100 hover:bg-purple-200 px-2 py-1 rounded transition-colors font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                    </button><button onclick="openDDx('erythema')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                </div>
+                <div class="p-4 space-y-3">
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">
+                            <i>TARGET LESION (เป้ายิงธนู)</i><br>
+                            <span class="text-xs text-slate-500 mt-1 block">1) ชั้นในสุดแดงเข้ม หรือตุ่มน้ำพอง 2) ชั้นถัดมาสีซีดจาง 3) ชั้นนอกสุดแดงจางๆ</span>
+                        </span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed"><i>Drug to SCAR interval : 1-3 wks</i></span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed"><b>ไม่พบ</b> prodrome</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">พบผื่นบริเวณเยื่อบุ <b>1 ตำแหน่ง</b> (ริมฝีปาก ช่องปาก เยื่อบุตา อวัยวะเพศ)</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed"><b>ไม่พบการหลุดลอกของผิวหนัง</b></span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-red-100 bg-red-50/50 rounded-xl cursor-pointer transition-all">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-red-600 leading-relaxed">R/O จาก ติดเชื้อไวรัส (herpe simplex) แบคทีเรีย</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- SJS & TEN -->
+            <div class="bg-white rounded-2xl shadow-sm border border-red-200 overflow-hidden lg:col-span-2 flex flex-col">
+                <div class="grid grid-cols-2 divide-x divide-red-200 border-b border-red-200 bg-red-50">
+                    <div class="px-5 py-3 flex flex-col items-center gap-2">
+                        <h2 class="font-semibold text-red-800 text-lg">SJS</h2>
+                        <div class="flex items-center gap-2"><button onclick="openModal('SJS', 'รูป-sjs.jpg')" class="flex items-center gap-1 text-xs text-red-700 bg-red-100 hover:bg-red-200 px-2 py-1 rounded transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                        </button><button onclick="openDDx('sjs')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                    </div>
+                    <div class="px-5 py-3 flex flex-col items-center gap-2">
+                        <h2 class="font-semibold text-red-800 text-lg">TEN</h2>
+                        <div class="flex items-center gap-2"><button onclick="openModal('TEN', 'รูป-ten.jpg')" class="flex items-center gap-1 text-xs text-red-700 bg-red-100 hover:bg-red-200 px-2 py-1 rounded transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                        </button><button onclick="openDDx('ten')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                    </div>
+                </div>
+                
+                <div class="p-5 space-y-3 border-b border-slate-200 flex-1">
+                    <label class="warning-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox" class="accent-red-600">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">
+                            <i>ATYPICAL TARGET LESION</i><br>
+                            <span class="text-xs text-slate-500 mt-1 block">1) ผื่นเป็นวงไม่ครบสามชั้น 2) ผื่นสีแดงจัดหรือแดงเข้ม/ตรงกลางอาจเป็นสีดำ เทา หรือตุ่มน้ำพอง</span>
+                        </span>
+                    </label>
+                    <label class="warning-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox" class="accent-red-600">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed"><i>Drug to SCAR interval : 4-28days</i></span>
+                    </label>
+                    <label class="warning-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox" class="accent-red-600">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed"><b>พบ</b> prodrome (ไข้ ≥38.5°C +เจ็บคอ เจ็บผิวหนัง เจ็บตา)</span>
+                    </label>
+                    <label class="warning-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox" class="accent-red-600">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">พบผื่นบริเวณเยื่อบุ <b>&gt;1 ตำแหน่ง</b> (ริมฝีปาก ช่องปาก เยื่อบุตา อวัยวะเพศ)</span>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-200 bg-slate-50">
+                    <div class="p-4 space-y-3">
+                        <label class="warning-card flex items-start p-3 border border-red-200 bg-white rounded-xl cursor-pointer transition-all hover:shadow-sm">
+                            <input type="checkbox" class="accent-red-600">
+                            <span class="check-text ml-3 text-sm text-slate-800 font-medium">SJS หลุดลอก &lt; 10%BSA</span>
+                        </label>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <label class="warning-card flex items-start p-3 border border-red-300 bg-white rounded-xl cursor-pointer transition-all hover:shadow-sm">
+                            <input type="checkbox" class="accent-red-600">
+                            <span class="check-text ml-3 text-sm text-slate-800 font-medium">SJS-TEN หลุดลอก 10-30%BSA</span>
+                        </label>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <label class="warning-card flex items-start p-3 border border-red-400 bg-white rounded-xl cursor-pointer transition-all hover:shadow-sm">
+                            <input type="checkbox" class="accent-red-600">
+                            <span class="check-text ml-3 text-sm text-slate-800 font-bold">TEN หลุดลอก &gt;30% BSA</span>
+                        </label>
+                        <label class="warning-card flex items-start p-2 rounded-lg cursor-pointer transition-all hover:bg-slate-100">
+                            <input type="checkbox" class="accent-red-600">
+                            <span class="check-text ml-3 text-sm text-slate-700"><i>Nikosky's sign POSITIVE</i></span>
+                        </label>
+                        <label class="warning-card flex items-start p-2 rounded-lg cursor-pointer transition-all hover:bg-slate-100">
+                            <input type="checkbox" class="accent-red-600">
+                            <span class="check-text ml-3 text-sm text-red-600">R/O จาก SSSS, toxic shock syndrome</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exfoliative dermatitis -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-semibold text-slate-800 text-lg leading-tight">Exfoliative<br>dermatitis</h2>
+                        <div class="flex items-center gap-2"><button onclick="openModal('Exfoliative dermatitis', 'รูป-exfoliative.jpg')" class="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                        </button><button onclick="openDDx('exfoliative')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                    </div>
+                </div>
+                <div class="p-4 space-y-3">
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ผิวหนังแดง หนา ด้าน แห้งเป็นขุย</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">มีการหลุดลอกเป็นขุยทั่วร่างกาย</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">รู้สึกคัน/ไม่แสบร้อนหรือเจ็บผิวหนัง</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed"><i>Drug to SCAR interval : 1 day-6 wks</i></span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-red-100 bg-red-50/50 rounded-xl cursor-pointer transition-all">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-red-600 leading-relaxed">R/O psoriasis</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- DRESS -->
+            <div class="bg-white rounded-2xl shadow-sm border border-orange-200 overflow-hidden">
+                <div class="bg-orange-50 px-5 py-3 border-b border-orange-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-semibold text-orange-800 text-lg">DRESS</h2>
+                        <div class="flex items-center gap-2"><button onclick="openModal('DRESS', 'รูป-dress.jpg')" class="flex items-center gap-1 text-xs text-orange-700 bg-orange-100 hover:bg-orange-200 px-2 py-1 rounded transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                        </button><button onclick="openDDx('dress')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                    </div>
+                </div>
+                <div class="p-4 space-y-3">
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox" class="accent-orange-500">
+                        <span class="check-text ml-3 text-sm text-slate-800 font-medium leading-relaxed">มีไข้ ≥38.5°C ร่วมกับอาการต่อไปนี้</span>
+                    </label>
+                    <div class="pl-4 space-y-2 border-l-2 border-orange-100 ml-4">
+                        <label class="check-card flex items-start p-2 border border-slate-100 rounded-lg cursor-pointer transition-all hover:bg-slate-50">
+                            <input type="checkbox" class="accent-orange-500">
+                            <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">+ ผื่น (MP rash, SJS, TEN, Exfoliative)</span>
+                        </label>
+                        <label class="check-card flex items-start p-2 border border-slate-100 rounded-lg cursor-pointer transition-all hover:bg-slate-50">
+                            <input type="checkbox" class="accent-orange-500">
+                            <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">+ involve internal organ<br><span class="text-xs text-slate-500">(atypical lymphocyte, elevated transaminase concentration)</span></span>
+                        </label>
+                        <label class="check-card flex items-start p-2 border border-slate-100 rounded-lg cursor-pointer transition-all hover:bg-slate-50">
+                            <input type="checkbox" class="accent-orange-500">
+                            <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">+ increase EO (&gt;700cell/µL)</span>
+                        </label>
+                    </div>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50 mt-4">
+                        <input type="checkbox" class="accent-orange-500">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed"><i>Drug to SCAR interval : 2-6wk</i></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- AGEP -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-semibold text-slate-800 text-lg">AGEP</h2>
+                        <div class="flex items-center gap-2"><button onclick="openModal('AGEP', 'รูป-agep.jpg')" class="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> ดูรูป
+                        </button><button onclick="openDDx('agep')" class="text-xs text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 rounded transition-colors font-medium">DDx</button></div>
+                    </div>
+                </div>
+                <div class="p-4 space-y-3">
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">ตุ่มหนองบริเวณใบหน้า ลามมาลำตัว</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">facial edema</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">Sterile pustular eruption</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">มีไข้≥38.5°C</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">Neutrophile (≥7000 cell/µL)</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed">Mild eosinophillia</span>
+                    </label>
+                    <label class="check-card flex items-start p-3 border border-slate-200 rounded-xl cursor-pointer transition-all hover:bg-slate-50">
+                        <input type="checkbox">
+                        <span class="check-text ml-3 text-sm text-slate-700 leading-relaxed"><i>Drug to SCAR interval: 1-11days</i></span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal สำหรับดูรูปผื่น -->
+    <div id="imageModal" class="fixed inset-0 z-50 hidden bg-black/70 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="closeModal(event)">
+        <div class="bg-white rounded-2xl overflow-hidden max-w-2xl w-full relative shadow-2xl transform scale-95 transition-transform duration-300" id="modalContent" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="modalTitle" class="text-lg font-semibold text-slate-800">ตัวอย่างผื่น</h3>
+                <button onclick="closeModal()" class="text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-full p-2 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="bg-slate-100 flex justify-center items-center p-4 min-h-[300px]">
+                <img id="modalImage" src="" alt="ตัวอย่างผื่น" class="max-h-[60vh] object-contain rounded shadow-sm border border-slate-200">
+            </div>
+            <div class="p-3 bg-slate-50 text-xs text-slate-500 text-center border-t border-slate-200">
+                *รูปภาพใช้เพื่อประกอบการพิจารณาเบื้องต้นเท่านั้น
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal DDx -->
+    <div id="ddxModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/70 p-4" onclick="if(event.target===this) closeDDx()">
+        <div class="bg-white rounded-2xl overflow-hidden max-w-md w-full shadow-2xl">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="ddxTitle" class="text-lg font-semibold text-emerald-800">DDx</h3>
+                <button onclick="closeDDx()" aria-label="ปิด" class="text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-full p-2 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <ul id="ddxList" class="p-4 space-y-2 max-h-[60vh] overflow-y-auto"></ul>
+            <div class="p-3 bg-slate-50 text-xs text-slate-500 text-center border-t border-slate-200 leading-relaxed">
+                *รายการนี้ใช้ประกอบการพิจารณาเบื้องต้นเท่านั้น<br>
+                รายการที่มี (เพิ่มเติม) เป็นข้อมูลทั่วไป ควรตรวจทานก่อนใช้งานจริง
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal แกลเลอรีรูปผื่น (รองรับหลายรูป) -->
+    <div id="galleryModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4" onclick="if(event.target===this) closeGallery()">
+        <div class="bg-white rounded-2xl overflow-hidden max-w-2xl w-full shadow-2xl">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="galleryTitle" class="text-lg font-semibold text-slate-800">ตัวอย่างผื่น</h3>
+                <button onclick="closeGallery()" aria-label="ปิด" class="text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-full p-2 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="relative bg-slate-100 flex justify-center items-center p-4 min-h-[300px]">
+                <button id="galPrev" onclick="stepGallery(-1)" aria-label="รูปก่อนหน้า" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-slate-700 rounded-full w-10 h-10 shadow flex items-center justify-center text-xl">&#8249;</button>
+                <img id="galleryImage" src="" alt="" class="max-h-[55vh] object-contain rounded shadow-sm border border-slate-200 bg-white">
+                <button id="galNext" onclick="stepGallery(1)" aria-label="รูปถัดไป" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-slate-700 rounded-full w-10 h-10 shadow flex items-center justify-center text-xl">&#8250;</button>
+            </div>
+            <div class="p-4 bg-slate-50 border-t border-slate-200 space-y-2">
+                <div id="galleryCounter" class="text-xs text-slate-500 text-center"></div>
+                <p id="galleryCaption" class="text-sm text-slate-700 leading-relaxed"></p>
+                <p id="galleryCredit" class="text-xs text-slate-500 italic leading-relaxed"></p>
+            </div>
+            <div class="p-3 bg-slate-100 text-xs text-slate-500 text-center border-t border-slate-200">
+                *รูปภาพใช้เพื่อประกอบการพิจารณาเบื้องต้นเท่านั้น
+            </div>
+        </div>
+    </div>
+
+    <!-- Script สำหรับ Modal -->
+    <script>
+        function openModal(title, imgSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalContent = document.getElementById('modalContent');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalImage = document.getElementById('modalImage');
+
+            // เปลี่ยนชื่อหัวข้อ Modal
+            modalTitle.innerText = `ตัวอย่างผื่น: ${title}`;
+            
+            // ตอนนี้ผมตั้งระบบสำรองไว้ว่าถ้าไฟล์รูปไม่มีอยู่จริง (หรือไม่ได้ใส่) ให้สร้างรูปจำลองสีเทาๆ ขึ้นมาให้ดูก่อน
+            // คุณสามารถเอา url(https://placehold.co/...) ออกได้ถ้าใส่รูปจริงครบแล้ว
+            modalImage.src = imgSrc && imgSrc !== '' ? imgSrc : `https://placehold.co/600x400/e2e8f0/475569?text=${title.replace(/\s+/g, '+')}`;
+            
+            // ตั้งระบบ Fallback เผื่อรูปโหลดไม่ขึ้น ให้แสดงเป็น Placeholder
+            modalImage.onerror = function() {
+                this.src = `https://placehold.co/600x400/e2e8f0/475569?text=Image+Not+Found+(${title.replace(/\s+/g, '+')})`;
+            };
+
+            // แสดง Modal พร้อม Animation
+            modal.classList.remove('hidden');
+            // Trigger reflow เพื่อให้ Animation ทำงาน
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            modalContent.classList.remove('scale-95');
+        }
+
+        function closeModal(event) {
+            const modal = document.getElementById('imageModal');
+            const modalContent = document.getElementById('modalContent');
+
+            // ซ่อน Modal พร้อม Animation
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+
+            // รอให้ Animation จบก่อนค่อยซ่อนจริงๆ
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // ===== DDx =====
+        // รูปแบบข้อมูล DDx (ใส่เองได้เลย)
+        // items แต่ละรายการเป็นได้ 2 แบบ:
+        //   'ชื่อโรค'                                  (แบบข้อความล้วน)
+        //   { name: 'ชื่อโรค', note: 'จุดที่ใช้แยก' }  (แบบมีคำอธิบาย)
+        const DDX_DATA = {
+            mprash: { title: 'MP rash', items: [] },
+            urticaria: { title: 'Urticaria', items: [] },
+            eczematous: { title: 'Eczematous drug eruption', items: [] },
+            angioedema: { title: 'Angioedema', items: [] },
+            fixed: { title: 'Fixed drug eruption', items: [] },
+            erythema: { title: 'Erythema multiforme', items: [] },
+            sjs: { title: 'SJS', items: [] },
+            ten: { title: 'TEN', items: [] },
+            exfoliative: { title: 'Exfoliative dermatitis', items: [] },
+            dress: { title: 'DRESS', items: [] },
+            agep: { title: 'AGEP', items: [] },
+        };
+
+        function openDDx(key) {
+            const data = DDX_DATA[key];
+            if (!data) return;
+            document.getElementById('ddxTitle').innerText = `DDx: ${data.title}`;
+            const list = document.getElementById('ddxList');
+            list.innerHTML = '';
+            if (!data.items.length) {
+                const empty = document.createElement('li');
+                empty.className = 'p-3 text-sm text-slate-500 text-center';
+                empty.textContent = 'ยังไม่มีข้อมูล DDx';
+                list.appendChild(empty);
+            }
+            data.items.forEach((item, i) => {
+                const name = typeof item === 'string' ? item : item.name;
+                const note = typeof item === 'string' ? '' : (item.note || '');
+
+                const li = document.createElement('li');
+                li.className = 'flex items-start gap-3 p-3 border border-slate-200 rounded-xl';
+
+                const num = document.createElement('span');
+                num.className = 'flex-shrink-0 w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold flex items-center justify-center';
+                num.textContent = i + 1;
+
+                const body = document.createElement('div');
+                const text = document.createElement('div');
+                text.className = 'text-sm text-slate-800 font-medium leading-relaxed';
+                text.textContent = name;
+                body.appendChild(text);
+                if (note) {
+                    const sub = document.createElement('div');
+                    sub.className = 'text-xs text-slate-500 mt-1 leading-relaxed';
+                    sub.textContent = note;
+                    body.appendChild(sub);
+                }
+
+                li.append(num, body);
+                list.appendChild(li);
+            });
+            const modal = document.getElementById('ddxModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDDx() {
+            const modal = document.getElementById('ddxModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeDDx();
+        });
+
+        // รูปที่ฝังในไฟล์ (สคริปต์ embed_images.py จะเติมให้อัตโนมัติ)
+        const EMBEDDED_IMAGES = {};
+        function imgUrl(p) { return EMBEDDED_IMAGES[p] || IMG_BASE + p; }
+
+        // ที่อยู่โฟลเดอร์รูป
+        // ใช้ในเครื่อง: 'images/'
+        // ใช้ GitHub (repo สาธารณะ): 'https://raw.githubusercontent.com/USER/REPO/main/images/'
+        const IMG_BASE = 'images/';
+
+        // ===== แกลเลอรีรูปผื่น =====
+        // ใส่รูปไว้ในโฟลเดอร์ images/ ข้างไฟล์ HTML และแก้ชื่อไฟล์ใน src ให้ตรง
+        // credit คือเครดิตแหล่งที่มา ต้องคงไว้ตามข้อกำหนดของสัญญา
+        const GALLERY_DATA = {
+            mprash: {
+                title: 'MP rash (Exanthematous / morbilliform drug eruption)',
+                images: [
+                    {
+                        src: imgUrl('mprash-1.jpg'),
+                        caption: 'Numerous erythematous macules and papules are present in this child with a morbilliform drug eruption.',
+                        credit: 'Exanthematous (morbilliform) drug eruption. Graphic 54205 Version 9.0. © 2026 UpToDate, Inc. and/or its affiliates. Reproduced with permission from www.visualdx.com. Copyright VisualDx.'
+                    },
+                    {
+                        src: imgUrl('mprash-2.jpg'),
+                        caption: 'Numerous small, discrete papules on the back of a patient with exanthematous drug eruption.',
+                        credit: 'Exanthematous (morbilliform) drug eruption. Graphic 86552 Version 8.0. © 2026 UpToDate, Inc. and/or its affiliates. Reproduced with permission from www.visualdx.com. Copyright VisualDx.'
+                    },
+                    {
+                        src: imgUrl('mprash-3.jpg'),
+                        caption: 'Profuse eruption of macules and papules on the back of a patient with exanthematous drug eruption.',
+                        credit: 'Exanthematous (morbilliform) drug eruption. Graphic 86509 Version 6.0. © 2026 UpToDate, Inc. and/or its affiliates. Reproduced with permission from www.visualdx.com. Copyright VisualDx.'
+                    }
+                ]
+            }
+        };
+
+        let galleryKey = null;
+        let galleryIndex = 0;
+
+        function openGallery(key) {
+            const data = GALLERY_DATA[key];
+            if (!data || !data.images.length) return;
+            galleryKey = key;
+            galleryIndex = 0;
+            document.getElementById('galleryTitle').innerText = `ตัวอย่างผื่น: ${data.title}`;
+            renderGallery();
+            const modal = document.getElementById('galleryModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function renderGallery() {
+            const data = GALLERY_DATA[galleryKey];
+            const item = data.images[galleryIndex];
+            const total = data.images.length;
+
+            const img = document.getElementById('galleryImage');
+            img.alt = item.caption;
+            img.src = item.src;
+            img.onerror = function () {
+                this.onerror = null;
+                this.src = `https://placehold.co/600x400/e2e8f0/475569?text=${encodeURIComponent('ไม่พบไฟล์: ' + item.src)}`;
+            };
+
+            document.getElementById('galleryCounter').innerText = `${galleryIndex + 1} / ${total}`;
+            document.getElementById('galleryCaption').innerText = item.caption;
+            document.getElementById('galleryCredit').innerText = `ที่มา: ${item.credit}`;
+
+            const multi = total > 1;
+            document.getElementById('galPrev').classList.toggle('hidden', !multi);
+            document.getElementById('galNext').classList.toggle('hidden', !multi);
+        }
+
+        function stepGallery(step) {
+            const total = GALLERY_DATA[galleryKey].images.length;
+            galleryIndex = (galleryIndex + step + total) % total;
+            renderGallery();
+        }
+
+        function closeGallery() {
+            const modal = document.getElementById('galleryModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        document.addEventListener('keydown', e => {
+            const open = document.getElementById('galleryModal').classList.contains('flex');
+            if (!open) return;
+            if (e.key === 'Escape') closeGallery();
+            if (e.key === 'ArrowLeft') stepGallery(-1);
+            if (e.key === 'ArrowRight') stepGallery(1);
+        });
+
+        // ===== ลักษณะรอยโรค =====
+        // รูปวางในโฟลเดอร์ images/lesion/ ชื่อไฟล์ตรงกับ key เช่น images/lesion/macule.jpg
+        const LESION_GROUPS = [
+            {
+                title: 'Primary lesion', items: [
+                    { key: 'macule', name: 'Macule', thai: 'ปื้นแบน', size: '< 1 cm', desc: 'Flat, pigmented, circumscribed lesion' },
+                    { key: 'patch', name: 'Patch', thai: 'ปื้นแบนสีต่างจากผิวรอบข้าง', size: '> 1 cm', desc: 'Flat, circumscribed discoloration' },
+                    { key: 'papule', name: 'Papule', thai: 'ตุ่มนูนแข็ง', size: '< 1 cm', desc: 'Solid, elevated lesion' },
+                    { key: 'plaque', name: 'Plaque', thai: 'ปื้นนูนแบน', size: '> 1 cm', desc: 'Slightly elevated, flat, scale-like lesion' },
+                    { key: 'nodule', name: 'Nodule', thai: 'ก้อนลึกนูน', size: '0.6–2 cm', desc: 'Palpable, circumscribed lesion larger and deeper than a papule, extends into dermis' },
+                    { key: 'vesicle', name: 'Vesicle', thai: 'ตุ่มน้ำใส', size: '< 0.5 cm', desc: 'Elevated, circumscribed, fluid-filled lesion' },
+                    { key: 'bulla', name: 'Bulla', thai: 'พุพองขนาดใหญ่', size: '> 1 cm', desc: 'Vesicle or blister larger than 1 cm' },
+                    { key: 'pustule', name: 'Pustule', thai: 'ตุ่มหนอง', size: '< 1 cm', desc: 'Small, raised, circumscribed lesion containing pus' },
+                    { key: 'wheal', name: 'Wheal', thai: 'ผื่นบวมนูนชั่วคราว', size: 'ขนาดแปรผัน', desc: 'Elevated, firm, round lesion with localized edema; center paler than the edge' }
+                ]
+            },
+            {
+                title: 'Secondary lesion', items: [
+                    { key: 'crust', name: 'Crust', thai: 'สะเก็ดแห้ง', size: '-', desc: 'Dried serum, blood, or purulent exudate; slightly elevated' },
+                    { key: 'scale', name: 'Scale', thai: 'ขุย / สะเก็ดผิว', size: '-', desc: 'Heaped-up keratinized cells, flaky skin' },
+                    { key: 'erosion', name: 'Erosion', thai: 'แผลตื้นผิวหนังชั้นบนหลุด', size: '-', desc: 'Loss of part of epidermis; moist, glistening; follows rupture of a vesicle or bulla' },
+                    { key: 'ulcer', name: 'Ulcer', thai: 'แผลลึกถึงชั้นหนังแท้', size: '-', desc: 'Open sore extending into dermis; usually heals with scarring' },
+                    { key: 'fissure', name: 'Fissure', thai: 'แผลแตกเป็นร่อง', size: '-', desc: 'Split or cracked sore extending into dermis' },
+                    { key: 'excoriation', name: 'Excoriation', thai: 'รอยขูดข่วน', size: '-', desc: 'Linear scratch marks or traumatized abrasion of epidermis' },
+                    { key: 'lichenification', name: 'Lichenification', thai: 'ผิวหนาหยาบจากการเกา', size: '-', desc: 'Rough, thickened epidermis from persistent rubbing or itching' },
+                    { key: 'scar', name: 'Scar', thai: 'แผลเป็น', size: '-', desc: 'Thin to thick fibrous tissue replacing normal skin after injury' },
+                    { key: 'atrophy', name: 'Atrophy', thai: 'ผิวบางลง', size: '-', desc: 'Thinning of skin with loss of skin markings; translucent, paper-like' },
+                    { key: 'keloid', name: 'Keloid', thai: 'แผลเป็นนูนขยายเกินขอบแผล', size: '-', desc: 'Irregularly shaped, elevated scar that keeps enlarging beyond the wound' }
+                ]
+            },
+            {
+                title: 'Hemorrhage / Bleeding', items: [
+                    { key: 'petechiae', name: 'Petechiae', thai: 'จุดเลือดออกเล็กๆ', size: '< 3 mm', desc: 'Non-palpable pinpoint hemorrhage' },
+                    { key: 'purpura', name: 'Purpura', thai: 'จ้ำเลือดออก', size: '3–10 mm', desc: 'Larger hemorrhagic area; may be palpable' },
+                    { key: 'ecchymosis', name: 'Ecchymosis', thai: 'รอยจ้ำช้ำ', size: '-', desc: 'Bruise-like discoloration from bleeding into the skin' },
+                    { key: 'hematoma', name: 'Hematoma', thai: 'ก้อนเลือดคั่ง', size: '> 10 mm', desc: 'Collection of blood in tissue' }
+                ]
+            }
+        ];
+
+        function renderLesionGroups() {
+            const wrap = document.getElementById('lesionGroups');
+            LESION_GROUPS.forEach(group => {
+                const block = document.createElement('div');
+
+                const h3 = document.createElement('h3');
+                h3.className = 'text-sm font-semibold text-blue-700 uppercase tracking-wide mb-3';
+                h3.textContent = group.title;
+                block.appendChild(h3);
+
+                const grid = document.createElement('div');
+                grid.className = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4';
+
+                group.items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col';
+
+                    const img = document.createElement('img');
+                    img.src = imgUrl(`lesion/${item.key}.jpg`);
+                    img.alt = item.name;
+                    img.loading = 'lazy';
+                    img.className = 'w-full aspect-[4/3] object-cover bg-slate-100';
+                    img.onerror = function () {
+                        this.onerror = null;
+                        this.src = `https://placehold.co/400x300/e2e8f0/475569?text=${encodeURIComponent('ยังไม่มีรูป: ' + item.key)}`;
+                    };
+
+                    const body = document.createElement('div');
+                    body.className = 'p-3 space-y-1';
+
+                    const title = document.createElement('div');
+                    title.className = 'flex items-baseline justify-between gap-2';
+                    const name = document.createElement('span');
+                    name.className = 'font-semibold text-slate-800';
+                    name.textContent = item.name;
+                    const size = document.createElement('span');
+                    size.className = 'text-xs text-slate-500 whitespace-nowrap';
+                    size.textContent = item.size;
+                    title.append(name, size);
+
+                    const thai = document.createElement('div');
+                    thai.className = 'text-sm text-emerald-700';
+                    thai.textContent = item.thai;
+
+                    const desc = document.createElement('div');
+                    desc.className = 'text-xs text-slate-500 leading-relaxed';
+                    desc.textContent = item.desc;
+
+                    body.append(title, thai, desc);
+                    card.append(img, body);
+                    grid.appendChild(card);
+                });
+
+                block.appendChild(grid);
+                wrap.appendChild(block);
+            });
+        }
+
+        renderLesionGroups();
+    </script>
+</body>
+</html>
